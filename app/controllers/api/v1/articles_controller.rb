@@ -4,7 +4,7 @@ module Api
   module V1
     class ArticlesController < ApplicationController
       def index
-        @articles = @service.findAllArticle
+        @articles = service.findAllArticle
 
         render json: {
           message: 'success',
@@ -13,7 +13,7 @@ module Api
       end
 
       def show
-        @article = @service.findArticleById(params[:id])
+        @article = service.findArticleById(params[:id])
 
         render json: {
           message: 'success',
@@ -22,7 +22,7 @@ module Api
       end
 
       def create
-        @article = @service.createArticle(article_params)
+        @article = service.createArticle(article_params)
 
         render json: {
           message: 'success',
@@ -31,7 +31,7 @@ module Api
       end
 
       def update
-        @article = @service.updateArticle(params[:id], article_params)
+        @article = service.updateArticle(params[:id], article_params)
 
         render json: {
           message: 'success',
@@ -40,7 +40,7 @@ module Api
       end
 
       def destroy
-        @service.deleteArticle(params[:id])
+        service.deleteArticle(params[:id])
         render json: {
           message: 'success'
         }, status: :ok
