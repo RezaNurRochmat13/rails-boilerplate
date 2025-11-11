@@ -1,3 +1,11 @@
+require 'sidekiq/web'
+
+# simple basic auth for sidekiq web (dev/prod adjust as needed)
+Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+  ActiveSupport::SecurityUtils.secure_compare(username, ENV.fetch('SIDEKIQ_WEB_USER', 'admin')) &
+    ActiveSupport::SecurityUtils.secure_compare(password, ENV.fetch('SIDEKIQ_WEB_PASSWORD', 'secret'))
+end
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -15,5 +23,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :articles
     end
+  end
+
+  # Sidekiq config routes
+  mount Sidekiq::Web => '/sidekiq' # => http://localhost:3000/sidekiq
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 end
