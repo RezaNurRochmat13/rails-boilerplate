@@ -42,6 +42,9 @@ gem 'thruster', require: false
 # Sidekiq gem
 gem 'sidekiq'
 
+# Lograge
+gem 'lograge'
+
 gem 'letter_opener'
 
 group :development, :test do
