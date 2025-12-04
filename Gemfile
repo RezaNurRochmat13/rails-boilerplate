@@ -45,9 +45,14 @@ gem 'sidekiq'
 # Lograge
 gem 'lograge'
 
+# Letter Opener
 gem 'letter_opener'
 
+# Redis
 gem 'redis'
+
+# JWT
+gem 'jwt'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
