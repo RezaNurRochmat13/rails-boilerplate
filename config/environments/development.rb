@@ -95,4 +95,11 @@ Rails.application.configure do
       params: event.payload[:params].except("controller", "action", "format")
     }
   end
+
+  # Redis config
+  config.cache_store = :redis_cache_store, {
+    url: ENV['REDIS_URL'],
+    namespace: 'myapp-cache',
+    expires_in: 1.hour
+  }
 end
