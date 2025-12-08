@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-class JsonWebToken # rubocop:disable Style/Documentation
+class JwtUtil # rubocop:disable Style/Documentation
   class << self
+    def generate_token(user)
+      @token = encode(user_id: user.id)
+    end
+
     def encode(payload, exp = 24.hours.from_now)
       payload[:exp] = exp.to_i
       JWT.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)

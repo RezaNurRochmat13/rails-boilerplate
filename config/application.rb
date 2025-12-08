@@ -23,7 +23,7 @@ module RailsBoilerplate
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    config.autoload_paths += %W[#{config.root}/app/workers]
+    config.paths.add "app/workers", eager_load: true
     config.active_job.queue_adapter = :sidekiq
   end
 end
