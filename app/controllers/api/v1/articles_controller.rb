@@ -3,7 +3,7 @@
 module Api
   module V1
     class ArticlesController < ApplicationController
-      before_action :authenticate!
+      include Authenticable
 
       def index
         @articles = service.findAllArticle
@@ -26,14 +26,28 @@ module Api
       def create
         @article = service.createArticle(article_params)
 
-        render json: {
-          message: 'success',
-          data: @article
-        }, status: :created
+        if @article.persisted?
+          render json: {
+            message: 'success',
+            data: @article
+          }, status: :created
+        else
+          render json: {
+            message: 'error',
+            errors: @article.errors.full_messages
+          }, status: :unprocessable_content
+        end
       end
 
       def update
         @article = service.updateArticle(params[:id], article_params)
+
+        if @article.errors.any?
+          return render json: {
+            message: 'error',
+            errors: @article.errors.full_messages
+          }, status: :unprocessable_content
+        end
 
         render json: {
           message: 'success',

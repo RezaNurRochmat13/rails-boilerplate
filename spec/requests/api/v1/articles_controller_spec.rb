@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::ArticlesController', type: :request do
-  let!(:article) { Article.create(title: 'Initial Title', content: 'Initial Content') }
+  let!(:user) { User.create!(name: 'Test', email: 'test@mail.com', password: 'password') }
+  let!(:token) { JwtUtil.encode(user_id: user.id) }
+  let(:headers) { { 'Authorization' => "Bearer #{token}" } }
+
+  let!(:article) { Article.create!(title: 'Initial Title', content: 'Initial Content') }
 
   let(:valid_params) do
     {
@@ -19,7 +23,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
 
   describe 'GET /api/v1/articles' do
     it 'returns all articles with status 200' do
-      get '/api/v1/articles'
+      get '/api/v1/articles', headers: headers
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
@@ -30,7 +34,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
 
     it 'returns empty array when no articles exist' do
       Article.delete_all
-      get '/api/v1/articles'
+      get '/api/v1/articles', headers: headers
 
       json = JSON.parse(response.body)
       expect(json['data']).to eq([])
@@ -39,7 +43,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
 
   describe 'GET /api/v1/articles/:id' do
     it 'returns article detail with status 200' do
-      get "/api/v1/articles/#{article.id}"
+      get "/api/v1/articles/#{article.id}", headers: headers
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
@@ -48,7 +52,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
     end
 
     it 'returns 404 when article not found' do
-      get '/api/v1/articles/9999'
+      get '/api/v1/articles/9999', headers: headers
 
       expect(response).to have_http_status(:not_found)
     end
@@ -56,7 +60,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
 
   describe 'POST /api/v1/articles' do
     it 'creates article successfully with status 201' do
-      post '/api/v1/articles', params: valid_params
+      post '/api/v1/articles', params: valid_params, headers: headers
 
       expect(response).to have_http_status(:created)
       json = JSON.parse(response.body)
@@ -65,17 +69,17 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
     end
 
     it 'fails to create article with invalid params' do
-      post '/api/v1/articles', params: invalid_params
+      post '/api/v1/articles', params: invalid_params, headers: headers
 
-      expect(response).to have_http_status(:unprocessable_content).or have_http_status(:created)
-      json = JSON.parse(response.body)
-      expect(json['data']['id']).to be_nil
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'PUT /api/v1/articles/:id' do
     it 'updates article successfully with status 200' do
-      put "/api/v1/articles/#{article.id}", params: { title: 'Updated Title', content: 'Updated Content' }
+      put "/api/v1/articles/#{article.id}",
+          params: { title: 'Updated Title', content: 'Updated Content' },
+          headers: headers
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
@@ -83,21 +87,23 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
     end
 
     it 'returns 404 when updating non-existent article' do
-      put '/api/v1/articles/9999', params: valid_params
+      put '/api/v1/articles/9999', params: valid_params, headers: headers
 
       expect(response).to have_http_status(:not_found)
     end
 
     it 'returns error when params invalid' do
-      put "/api/v1/articles/#{article.id}", params: invalid_params
+      put "/api/v1/articles/#{article.id}",
+          params: invalid_params,
+          headers: headers
 
-      expect(response).to have_http_status(:unprocessable_content).or have_http_status(:ok)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'DELETE /api/v1/articles/:id' do
     it 'deletes article successfully with status 200' do
-      delete "/api/v1/articles/#{article.id}"
+      delete "/api/v1/articles/#{article.id}", headers: headers
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
@@ -105,7 +111,7 @@ RSpec.describe 'Api::V1::ArticlesController', type: :request do
     end
 
     it 'returns 404 when deleting non-existent article' do
-      delete '/api/v1/articles/9999'
+      delete '/api/v1/articles/9999', headers: headers
 
       expect(response).to have_http_status(:not_found)
     end
