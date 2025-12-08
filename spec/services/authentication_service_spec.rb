@@ -10,16 +10,16 @@ RSpec.describe AuthenticationService, type: :service do
         # Mock token generation agar tidak panggil encode sungguhan
         allow(JwtUtil).to receive(:generate_token).and_return('mocked.jwt.token')
 
-        result = service.login_user(email: 'test@mail.com', password: 'password123')
+        result = service.login(email: 'test@mail.com', password: 'password123')
 
-        expect(result).to eq('mocked.jwt.token')
+        expect(result[:token]).to eq('mocked.jwt.token')
         expect(JwtUtil).to have_received(:generate_token).with(user)
       end
     end
 
     context 'when email does not exist' do
       it 'returns nil' do
-        result = service.login_user(email: 'absent@mail.com', password: 'password123')
+        result = service.login(email: 'absent@mail.com', password: 'password123')
 
         expect(result).to be_nil
       end
@@ -27,7 +27,7 @@ RSpec.describe AuthenticationService, type: :service do
 
     context 'when password is wrong' do
       it 'returns nil' do
-        result = service.login_user(email: 'test@mail.com', password: 'wrong')
+        result = service.login(email: 'test@mail.com', password: 'wrong')
 
         expect(result).to be_nil
       end
@@ -42,7 +42,7 @@ RSpec.describe AuthenticationService, type: :service do
         password_confirmation: 'secretpass'
       }
 
-      result = service.register_user(params)
+      result = service.register(params)
 
       expect(result).to be_a(User)
       expect(result).to be_persisted

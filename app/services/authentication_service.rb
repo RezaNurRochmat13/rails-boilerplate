@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class AuthenticationService # rubocop:disable Style/Documentation
-  def login_user(auth_params)
+  def login(auth_params)
     user = User.find_by(email: auth_params[:email])
     return nil unless user&.authenticate(auth_params[:password])
 
-    JwtUtil.generate_token(user)
+    { token: JwtUtil.generate_token(user) }
   end
 
-  def register_user(user_params)
+  def register(user_params)
     @user = User.create(
       name: user_params[:name],
       email: user_params[:email],

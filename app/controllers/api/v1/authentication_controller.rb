@@ -2,15 +2,25 @@
 
 module Api
   module V1
-    class AuthController < ApplicationController # rubocop:disable Style/Documentation
+    class AuthenticationController < ApplicationController # rubocop:disable Style/Documentation
       def login
         result = service.login(auth_params)
-        render json: { message: 'success', data: result }, status: :ok
+
+        if result
+          render json: { message: 'success', data: result }, status: :ok
+        else
+          render json: { message: 'invalid credentials' }, status: :unauthorized
+        end
       end
 
       def register
-        result = service.register(auth_params)
-        render json: { message: 'success', data: result }, status: :created
+        user = service.register(auth_params)
+
+        if user.persisted?
+          render json: { message: 'success', data: user }, status: :created
+        else
+          render json: { message: 'failed', errors: user.errors.full_messages }, status: :unprocessable_entity
+        end
       end
 
       private
@@ -20,7 +30,7 @@ module Api
       end
 
       def auth_params
-        params.permit(:email, :password)
+        params.permit(:name, :email, :password, :password_confirmation)
       end
     end
   end
