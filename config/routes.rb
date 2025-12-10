@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
       post '/auth/login', to: 'authentication#login'
       post '/auth/register', to: 'authentication#register'
+
+      resources :recommendations, only: %i[index]
     end
   end
 
@@ -33,5 +35,6 @@ Rails.application.routes.draw do
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
+    mount Flipper::UI.app(Flipper) => "/flipper"
   end
 end
