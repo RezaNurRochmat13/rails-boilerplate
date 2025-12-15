@@ -170,6 +170,7 @@ paths:
       summary: Register new user
       tags:
       - Authentication
+      security: []
       parameters: []
       responses:
         '201':
@@ -210,6 +211,7 @@ paths:
       summary: Login user
       tags:
       - Authentication
+      security: []
       parameters: []
       responses:
         '200':
