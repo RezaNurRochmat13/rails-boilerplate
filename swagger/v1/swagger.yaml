@@ -1,9 +1,22 @@
 ---
 openapi: 3.0.1
 info:
-  title: API Documentation Boilerplate
+  title: Rails Boilerplate API
   version: v1
-  description: API Documentation Boilerplate
+  description: API documentation for Rails Boilerplate
+servers:
+- url: http://localhost:3001
+  description: Local
+- url: https://dev.api.rails.boilerplate.com
+  description: Production
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearerAuth: []
 paths:
   "/api/v1/articles":
     get:
@@ -229,8 +242,3 @@ paths:
               required:
               - email
               - password
-servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: www.example.com
