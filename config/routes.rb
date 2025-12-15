@@ -33,6 +33,10 @@ Rails.application.routes.draw do
   # Sidekiq config routes
   mount Sidekiq::Web => '/sidekiq' # => http://localhost:3000/sidekiq
 
+  # Swagger config routes
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
     mount Flipper::UI.app(Flipper) => "/flipper"

@@ -1,60 +1,129 @@
-# spec/requests/api/v1/auth_spec.rb
+# frozen_string_literal: true
+
 require 'rails_helper'
+require 'swagger_helper'
 
-RSpec.describe 'API::V1', type: :request do
-  let(:register_url) { '/api/v1/auth/register' }
-  let(:login_url)    { '/api/v1/auth/login' }
+RSpec.describe 'API::V1::Authentication', type: :request do
+  path '/api/v1/auth/register' do
+    post 'Register new user' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
 
-  describe 'POST /register' do
-    let(:valid_params) do
-      {
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'password123',
-        password_confirmation: 'password123'
-      }
-    end
+      parameter name: :params,
+                in: :body,
+                schema: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string },
+                    email: { type: :string, format: :email },
+                    password: { type: :string },
+                    password_confirmation: { type: :string }
+                  },
+                  required: %w[name email password password_confirmation]
+                }
 
-    it 'creates a new user and returns 201' do
-      post register_url, params: valid_params
+      response '201', 'user created successfully' do
+        schema type: :object,
+               properties: {
+                 message: { type: :string }
+               },
+               required: ['message']
 
-      expect(response).to have_http_status(:created)
-      json = JSON.parse(response.body)
+        let(:params) do
+          {
+            name: 'John Doe',
+            email: 'john@example.com',
+            password: 'password123',
+            password_confirmation: 'password123'
+          }
+        end
 
-      expect(json['message']).to eq('success')
-      expect(User.last.email).to eq('john@example.com')
-    end
+        run_test!
+      end
 
-    it 'returns validation error when params invalid' do
-      post register_url, params: valid_params.merge(email: '')
+      response '422', 'validation error' do
+        let(:params) do
+          {
+            name: 'John Doe',
+            email: '',
+            password: 'password123',
+            password_confirmation: 'password123'
+          }
+        end
 
-      expect(response.status).to eq(422).or eq(400)
+        run_test!
+      end
     end
   end
 
-  describe 'POST /login' do
-    let!(:user) do
-      User.create!(
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'password123',
-        password_confirmation: 'password123'
-      )
-    end
+  path '/api/v1/auth/login' do
+    post 'Login user' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
 
-    it 'returns JWT token with valid credentials' do
-      post login_url, params: { email: 'john@example.com', password: 'password123' }
+      parameter name: :params,
+                in: :body,
+                schema: {
+                  type: :object,
+                  properties: {
+                    email: { type: :string, format: :email },
+                    password: { type: :string }
+                  },
+                  required: %w[email password]
+                }
 
-      expect(response).to have_http_status(:ok)
-      json = JSON.parse(response.body)
+      response '200', 'login successful' do
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :object,
+                   properties: {
+                     token: { type: :string }
+                   },
+                   required: ['token']
+                 }
+               }
 
-      expect(json['data']['token']).to be_present
-    end
+        let!(:user) do
+          User.create!(
+            name: 'John Doe',
+            email: 'john@example.com',
+            password: 'password123',
+            password_confirmation: 'password123'
+          )
+        end
 
-    it 'returns unauthorized with invalid credentials' do
-      post login_url, params: { email: 'john@example.com', password: 'wrongpass' }
+        let(:params) do
+          {
+            email: 'john@example.com',
+            password: 'password123'
+          }
+        end
 
-      expect(response.status).to eq(401).or eq(400)
+        run_test!
+      end
+
+      response '401', 'invalid credentials' do
+        let!(:user) do
+          User.create!(
+            name: 'John Doe',
+            email: 'john@example.com',
+            password: 'password123',
+            password_confirmation: 'password123'
+          )
+        end
+
+        let(:params) do
+          {
+            email: 'john@example.com',
+            password: 'wrongpass'
+          }
+        end
+
+        run_test!
+      end
     end
   end
 end
