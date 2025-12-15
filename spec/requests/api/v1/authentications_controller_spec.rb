@@ -9,6 +9,7 @@ RSpec.describe 'API::V1::Authentication', type: :request do
       tags 'Authentication'
       consumes 'application/json'
       produces 'application/json'
+      security []
 
       parameter name: :params,
                 in: :body,
@@ -62,6 +63,7 @@ RSpec.describe 'API::V1::Authentication', type: :request do
       tags 'Authentication'
       consumes 'application/json'
       produces 'application/json'
+      security []
 
       parameter name: :params,
                 in: :body,
