@@ -5,6 +5,153 @@ info:
   version: v1
   description: API Documentation Boilerplate
 paths:
+  "/api/v1/articles":
+    get:
+      summary: List all articles
+      tags:
+      - Articles
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: articles retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                        content:
+                          type: string
+                      required:
+                      - id
+                      - title
+                      - content
+    post:
+      summary: Create article
+      tags:
+      - Articles
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: article created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      content:
+                        type: string
+        '422':
+          description: invalid params
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+              required:
+              - title
+              - content
+  "/api/v1/articles/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Get article detail
+      tags:
+      - Articles
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: article found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      content:
+                        type: string
+        '404':
+          description: article not found
+    put:
+      summary: Update article
+      tags:
+      - Articles
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: article updated
+        '422':
+          description: invalid params
+        '404':
+          description: article not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+    delete:
+      summary: Delete article
+      tags:
+      - Articles
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: article deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: article not found
   "/api/v1/auth/register":
     post:
       summary: Register new user
