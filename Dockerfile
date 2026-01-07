@@ -25,15 +25,13 @@ COPY Gemfile Gemfile.lock ./
 
 # Update RubyGems & Bundler, install net-pop/net-protocol explicitly
 RUN gem update --system && \
-    gem install bundler -v "~> 2.5" && \
-    gem install net-protocol -v "~> 0.2.2" && \
-    gem install net-pop -v "~> 0.1.2"
+    gem install bundler -v 2.5.11
+
 
 # Install gems
-RUN bundle update net-pop net-imap net-smtp mail && \
-    bundle config set --local without 'development test' && \
-    bundle install --jobs 4 --retry 3 --no-deployment && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+RUN bundle config set --local without 'development test' && \
+    bundle install --jobs 4 --retry 3 && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
