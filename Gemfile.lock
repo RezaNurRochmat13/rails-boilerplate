@@ -408,7 +408,7 @@ GEM
     stringio (3.1.7)
     thor (1.4.0)
     thruster (0.1.16-x86_64-linux)
-    timeout (0.4.4)
+    timeout (0.6.0)
     tsort (0.2.0)
     turbo-rails (2.0.20)
       actionpack (>= 7.1.0)
@@ -455,6 +455,8 @@ DEPENDENCIES
   letter_opener
   letter_opener_web
   lograge
+  net-pop
+  net-protocol
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
