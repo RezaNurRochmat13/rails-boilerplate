@@ -22,8 +22,16 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
-          bundler-cache: true
+          ruby-version: '3.2.2' # samakan dengan RUBY VERSION di lockfile
+          bundler-cache: false
+
+      - name: Install Bundler (locked version)
+        run: |
+          gem install bundler -v 2.5.11
+
+      - name: Verify Bundler version
+        run: |
+          bundler -v
 
       - name: Install dependencies
         run: |
