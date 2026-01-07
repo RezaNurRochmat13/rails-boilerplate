@@ -1,0 +1,55 @@
+name: Rails CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      RAILS_ENV: production
+      IMAGE_NAME: my-rails-app
+      IMAGE_TAG: latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          bundle install
+
+      - name: Build Rails application
+        run: |
+          echo "Building Rails app (assets / prepare step)"
+          echo "RAILS_ENV=${RAILS_ENV}"
+          # contoh (opsional):
+          # bundle exec rails assets:precompile
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${IMAGE_NAME}:${IMAGE_TAG} \
+            .
+
+      - name: Push Docker image (mock)
+        run: |
+          echo "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+
+      - name: Deploy application (mock)
+        run: |
+          echo "Deploying application..."
+          echo "ssh user@server 'docker pull ${IMAGE_NAME}:${IMAGE_TAG} && docker compose up -d'"
