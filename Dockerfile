@@ -27,6 +27,8 @@ COPY Gemfile Gemfile.lock ./
 RUN gem update --system && \
     gem install bundler -v 2.5.11
 
+# 🔥 INI KUNCINYA
+ENV BUNDLE_FORCE_RUBY_PLATFORM=true
 
 # Install gems
 RUN bundle config set --local without 'development test' && \
