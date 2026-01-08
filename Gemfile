@@ -60,7 +60,7 @@ gem "flipper-active_record"
 gem "flipper-ui" # optional, jika ingin UI
 gem 'rswag'
 
-gem "mail", "~> 2.8.1"
+gem "mail", "~> 2.9.0"
 
 
 group :development, :test do
