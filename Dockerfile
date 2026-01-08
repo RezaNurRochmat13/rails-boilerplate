@@ -20,29 +20,20 @@ ENV RAILS_ENV="production" \
 # ---------- Stage 2: Build ----------
 FROM base AS build
 
-# Copy Gemfile first for caching
 COPY Gemfile Gemfile.lock ./
+COPY vendor/cache vendor/cache
 
-# Update RubyGems & Bundler, install net-pop/net-protocol explicitly
 RUN gem update --system && \
-    gem install bundler -v 2.5.11
+    gem install bundler -v 2.4.22
 
-# 🔥 INI KUNCINYA
-ENV BUNDLE_FORCE_RUBY_PLATFORM=true
+ENV BUNDLE_WITHOUT="development:test"
 
-# Install gems
-RUN bundle config set --local without 'development test' && \
-    bundle install --jobs 4 --retry 3 && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache && \
-    bundle exec bootsnap precompile --gemfile
+RUN bundle config set without 'development test' && \
+    bundle install --full-index --jobs 4 --retry 3 && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache
 
-# Copy application code
 COPY . .
 
-# Precompile bootsnap
-RUN bundle exec bootsnap precompile app/ lib/
-
-# Precompile assets (without needing secret key)
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 # ---------- Stage 3: Runtime ----------
