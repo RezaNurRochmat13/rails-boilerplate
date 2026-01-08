@@ -189,7 +189,8 @@ GEM
     loofah (2.25.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    mail (2.8.1)
+    mail (2.9.0)
+      logger
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
@@ -204,6 +205,7 @@ GEM
       date
       net-protocol
     net-pop (0.1.2)
+      net-protocol
     net-protocol (0.2.2)
       timeout
     net-scp (4.1.0)
@@ -455,7 +457,7 @@ DEPENDENCIES
   letter_opener
   letter_opener_web
   lograge
-  mail (~> 2.8.1)
+  mail (~> 2.9.0)
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
